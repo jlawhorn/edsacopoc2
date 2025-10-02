@@ -1,0 +1,7 @@
+mountpoints:
+  /:
+    url: https://content.da.live/jlawhorn/edsacopoc2/
+    type: markup
+
+folders:
+  /products/: /products/default

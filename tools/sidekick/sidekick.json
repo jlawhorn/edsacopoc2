@@ -1,0 +1,5 @@
+{
+  "project": "EDS ACO POC",
+  "editUrlLabel": "Document Authoring",
+  "editUrlPattern": "https://da.live/edit#/jlawhorn/edsacopoc2{{pathname}}"
+}
