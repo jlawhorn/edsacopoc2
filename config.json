@@ -5,7 +5,8 @@
       "commerce-endpoint": "https://na1-sandbox.api.commerce.adobe.com/HtxMJZCyprWn4FS33yzJ3V/graphql",
       "headers": {
         "all": {
-          "Store": "default"
+          "Store": "default",
+          "ac-price-book-id": "base"
         },
         "cs": {
           "Magento-Customer-Group": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
