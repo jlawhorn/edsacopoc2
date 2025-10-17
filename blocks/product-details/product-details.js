@@ -484,7 +484,7 @@ function setMetaTags(product) {
   const metaImage = mainImage?.url || product?.images[0]?.url;
   createMetaTag('og:image', metaImage, 'property');
   createMetaTag('og:image:secure_url', metaImage, 'property');
-  createMetaTag('product:price:amount', price.value, 'property');
+  createMetaTag('product:price:amount', price?.value, 'property');
   createMetaTag('product:price:currency', price.currency, 'property');
 }
 
