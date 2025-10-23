@@ -7,7 +7,8 @@
         "all": {
           "Store": "default",
           "ac-price-book-id": "base",
-          "AC-View-ID": "044d8264-477c-49f9-b28e-3866ec05a27d"
+          "AC-View-ID": "044d8264-477c-49f9-b28e-3866ec05a27d",
+          "Magento-Website-Code": "base",
         },
         "cs": {
           "Magento-Customer-Group": "b6589fc6ab0dc82cf12099d1c2d40ab994e8410c",
