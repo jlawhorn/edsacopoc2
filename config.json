@@ -5,9 +5,9 @@
       "commerce-endpoint": "https://na1-sandbox.api.commerce.adobe.com/HtxMJZCyprWn4FS33yzJ3V/graphql",
       "headers": {
         "cs": {
+          "AC-Environment-ID": "HtxMJZCyprWn4FS33yzJ3V",
           "AC-View-ID": "044d8264-477c-49f9-b28e-3866ec05a27d",
           "AC-Source-Locale": "en_US",
-          "AC-Environment-ID": "HtxMJZCyprWn4FS33yzJ3V",
           "AC-Price-Book-ID": "base",
           "Magento-Store-Code": "main_website_store",
           "Magento-Store-View-Code": "default"
