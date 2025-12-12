@@ -35,7 +35,17 @@ export default async function decorate(block) {
     const index = await fetchIndex('enrichment/enrichment');
     const matchingFragments = index.data
       .filter((fragment) => Object.keys(filters).every((filterKey) => {
-        const values = JSON.parse(fragment[filterKey]);
+        // `fragment[filterKey]` may be an array (parsed JSON) or a JSON string.
+        // Handle both cases and default to an empty array to avoid JSON.parse('') errors.
+        let values = fragment[filterKey];
+        if (typeof values === 'string') {
+          try {
+            values = JSON.parse(values || '[]');
+          } catch (e) {
+            values = [];
+          }
+        }
+        if (!Array.isArray(values)) values = [];
         return values.includes(filters[filterKey]);
       }))
       .map((fragment) => fragment.path);
