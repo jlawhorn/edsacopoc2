@@ -14,7 +14,7 @@
 :root, .dropin-design {
   /* Adobe Commerce Dropin design tokens */
   --color-brand-300: #f48e8e;
-  --color-brand-500: #ff0000;
+  --color-brand-500: #f00;
   --color-brand-600: #823434;
   --color-brand-700: #570808;
   --color-neutral-50: #fff;

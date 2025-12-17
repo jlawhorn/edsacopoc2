@@ -38,8 +38,7 @@ function goToRelativeSlide(block, direction) {
   if (slides.length < 2) return;
 
   const currentIndex = parseInt(block.dataset.activeSlide || '0', 10);
-  const nextIndex =
-    (currentIndex + direction + slides.length) % slides.length;
+  const nextIndex = (currentIndex + direction + slides.length) % slides.length;
 
   showSlide(block, nextIndex);
 }
