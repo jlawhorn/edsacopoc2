@@ -1,5 +1,8 @@
 import { fetchPlaceholders } from '../../scripts/commerce.js';
 
+let duration = 6000;
+let shuffle = true;
+
 function updateActiveSlide(slide) {
   const block = slide.closest('.carousel');
   const slideIndex = parseInt(slide.dataset.slideIndex, 10);
@@ -69,43 +72,82 @@ function bindEvents(block) {
 }
 
 function startAutoplay(block, interval = 6000) {
-  const slides = block.querySelectorAll('.carousel-slide');
+  if (interval !== 0) {
+    const slides = block.querySelectorAll('.carousel-slide');
 
-  if (slides.length < 2) return;
-  let currentIndex = parseInt(block.dataset.activeSlide || '0', 10);
-  setInterval(() => {
-    const nextIndex = (currentIndex + 1) % slides.length;
-    showSlide(block, nextIndex);
-    currentIndex = nextIndex;
-  }, interval);
+    if (slides.length < 2) return;
+    let currentIndex = parseInt(block.dataset.activeSlide || '0', 10);
+    setInterval(() => {
+      const nextIndex = (currentIndex + 1) % slides.length;
+      showSlide(block, nextIndex);
+      currentIndex = nextIndex;
+    }, interval);
+  }
 }
 
 function createSlide(row, slideIndex, carouselId) {
-  const slide = document.createElement('li');
-  slide.dataset.slideIndex = slideIndex;
-  slide.setAttribute('id', `carousel-${carouselId}-slide-${slideIndex}`);
-  slide.classList.add('carousel-slide');
+  const columns = Array.from(row.querySelectorAll(':scope > div'));
 
-  row.querySelectorAll(':scope > div').forEach((column, colIdx) => {
-    column.classList.add(
-      `carousel-slide-${colIdx === 0 ? 'image' : 'content'}`,
-    );
-    slide.append(column);
-  });
+  if (columns.length >= 2) {
+    const key = columns[0].innerText.trim().toLowerCase();
+    const value = columns[1].innerText.trim();
 
-  const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
-  if (labeledBy) {
-    slide.setAttribute('aria-labelledby', labeledBy.getAttribute('id'));
+    // Config Row: duration
+    if (key === 'duration') {
+      const parsed = parseInt(value, 10);
+
+      if (!Number.isNaN(parsed)) {
+        duration = parsed;
+      }
+
+      return null;
+    }
+    // Slide Row
+    if (key === 'slide') {
+      const slide = document.createElement('li');
+      slide.dataset.slideIndex = slideIndex;
+      slide.setAttribute('id', `carousel-${carouselId}-slide-${slideIndex}`);
+      slide.classList.add('carousel-slide');
+
+      if (columns[1]) {
+        const contentColumn = columns[1];
+
+        if (contentColumn) {
+          contentColumn.classList.add('carousel-slide-content');
+          const pictureParagraphs = contentColumn.querySelectorAll('p > picture');
+          pictureParagraphs.forEach((picture) => {
+            const p = picture.parentElement;
+            p.replaceWith(picture);
+          });
+          console.log('contentColumn', contentColumn.outerHTML);
+          slide.append(contentColumn);
+        }
+
+        const heading = contentColumn.querySelector('h2');
+        const buttonContainer = contentColumn.querySelector('.button-container');
+
+        if (heading || buttonContainer) {
+          const textWrapper = document.createElement('div');
+          textWrapper.classList.add('carousel-slide-content_text');
+          if (heading) {
+            textWrapper.append(heading);
+          }
+          if (buttonContainer) {
+            textWrapper.append(buttonContainer);
+          }
+          contentColumn.append(textWrapper);
+        }
+
+        const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
+        if (labeledBy) {
+          slide.setAttribute('aria-labelledby', labeledBy.id);
+        }
+      }
+
+      return slide;
+    }
   }
-
-  return slide;
-}
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
+  return null;
 }
 
 let carouselId = 0;
@@ -143,14 +185,24 @@ export default async function decorate(block) {
     block.append(slideIndicatorsNav);
   }
 
-  shuffleArray(rows);
+  let slideCount = 0;
+  const slides = [];
 
-  rows.forEach((row, idx) => {
-    const slide = createSlide(row, idx, carouselId);
+  rows.forEach((row) => {
+    const slide = createSlide(row, slideCount, carouselId);
+
+    if (!slide) {
+      row.remove(); // config row
+      return;
+    }
+
+    slides.push(slide);
+    slideCount += 1;
+    row.remove();
+  });
+
+  slides.forEach((slide, idx) => {
     slidesWrapper.append(slide);
-
-    // eslint-disable-next-line no-console
-    console.log('row data', row);
 
     if (slideIndicators) {
       const indicator = document.createElement('li');
@@ -158,16 +210,15 @@ export default async function decorate(block) {
       indicator.dataset.targetSlide = idx;
       indicator.innerHTML = `<button type="button" aria-label="${
         placeholders.showSlide || 'Show Slide'
-      } ${idx + 1} ${placeholders.of || 'of'} ${rows.length}"></button>`;
+      } ${idx + 1} ${placeholders.of || 'of'} ${slides.length}"></button>`;
       slideIndicators.append(indicator);
     }
-    row.remove();
   });
 
   container.append(slidesWrapper);
   block.prepend(container);
   if (!isSingleSlide) {
     bindEvents(block);
-    startAutoplay(block);
+    startAutoplay(block, duration);
   }
 }
