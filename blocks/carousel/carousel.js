@@ -149,6 +149,9 @@ export default async function decorate(block) {
     const slide = createSlide(row, idx, carouselId);
     slidesWrapper.append(slide);
 
+    // eslint-disable-next-line no-console
+    console.log('row data', row);
+
     if (slideIndicators) {
       const indicator = document.createElement('li');
       indicator.classList.add('carousel-slide-indicator');
