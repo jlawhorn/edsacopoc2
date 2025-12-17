@@ -1,7 +1,9 @@
 import { fetchPlaceholders } from '../../scripts/commerce.js';
 
+const svgArrowLeft = '<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.69914 7.29289C9.08967 6.90237 9.72268 6.90237 10.1132 7.29289C10.5037 7.68342 10.5037 8.31643 10.1132 8.70696L7.82024 10.9999H19.4062C19.9585 10.9999 20.4062 11.4476 20.4062 11.9999C20.4062 12.5522 19.9585 12.9999 19.4062 12.9999H7.82024L10.1132 15.2929L10.1816 15.3691C10.5019 15.7618 10.4793 16.3408 10.1132 16.707C9.74709 17.0731 9.16809 17.0957 8.77532 16.7753L8.69914 16.707L4.69914 12.707C4.30862 12.3164 4.30862 11.6834 4.69914 11.2929L8.69914 7.29289Z" fill="currentColor" /></svg>';
+const svgArrowRight = '<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14.6992 7.29289C15.0897 6.90237 15.7228 6.90237 16.1133 7.29289L20.1133 11.2929C20.5038 11.6834 20.5038 12.3164 20.1133 12.707L16.1133 16.707C15.7228 17.0975 15.0897 17.0975 14.6992 16.707C14.3087 16.3164 14.3087 15.6834 14.6992 15.2929L16.9922 12.9999H5.40625C4.85397 12.9999 4.40625 12.5522 4.40625 11.9999C4.40625 11.4476 4.85397 10.9999 5.40625 10.9999H16.9922L14.6992 8.70696L14.6309 8.63078C14.3105 8.23801 14.3331 7.65901 14.6992 7.29289Z" fill="currentColor"/></svg>';
+
 let duration = 6000;
-let shuffle = true;
 
 function updateActiveSlide(slide) {
   const block = slide.closest('.carousel');
@@ -31,6 +33,17 @@ function updateActiveSlide(slide) {
   });
 }
 
+function goToRelativeSlide(block, direction) {
+  const slides = block.querySelectorAll('.carousel-slide');
+  if (slides.length < 2) return;
+
+  const currentIndex = parseInt(block.dataset.activeSlide || '0', 10);
+  const nextIndex =
+    (currentIndex + direction + slides.length) % slides.length;
+
+  showSlide(block, nextIndex);
+}
+
 function showSlide(block, slideIndex = 0) {
   const slides = block.querySelectorAll('.carousel-slide');
   let realSlideIndex = slideIndex < 0 ? slides.length - 1 : slideIndex;
@@ -49,13 +62,39 @@ function showSlide(block, slideIndex = 0) {
 
 function bindEvents(block) {
   const slideIndicators = block.querySelector('.carousel-slide-indicators');
-  if (!slideIndicators) return;
 
-  slideIndicators.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', (e) => {
-      const slideIndicator = e.currentTarget.parentElement;
-      showSlide(block, parseInt(slideIndicator.dataset.targetSlide, 10));
+  // Indicator clicks
+  if (slideIndicators) {
+    slideIndicators.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('click', (e) => {
+        const slideIndicator = e.currentTarget.parentElement;
+        showSlide(
+          block,
+          parseInt(slideIndicator.dataset.targetSlide, 10),
+        );
+      });
     });
+  }
+
+  // Arrow buttons
+  block.querySelector('.carousel-prev')?.addEventListener('click', () => {
+    goToRelativeSlide(block, -1);
+  });
+
+  block.querySelector('.carousel-next')?.addEventListener('click', () => {
+    goToRelativeSlide(block, 1);
+  });
+
+  // Keyboard navigation
+  block.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goToRelativeSlide(block, -1);
+    }
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      goToRelativeSlide(block, 1);
+    }
   });
 
   const slideObserver = new IntersectionObserver(
@@ -66,6 +105,7 @@ function bindEvents(block) {
     },
     { threshold: 0.5 },
   );
+
   block.querySelectorAll('.carousel-slide').forEach((slide) => {
     slideObserver.observe(slide);
   });
@@ -119,7 +159,6 @@ function createSlide(row, slideIndex, carouselId) {
             const p = picture.parentElement;
             p.replaceWith(picture);
           });
-          console.log('contentColumn', contentColumn.outerHTML);
           slide.append(contentColumn);
         }
 
@@ -151,6 +190,7 @@ function createSlide(row, slideIndex, carouselId) {
 }
 
 let carouselId = 0;
+
 export default async function decorate(block) {
   carouselId += 1;
   block.setAttribute('id', `carousel-${carouselId}`);
@@ -160,6 +200,7 @@ export default async function decorate(block) {
   const placeholders = await fetchPlaceholders();
 
   block.setAttribute('role', 'region');
+  block.setAttribute('tabindex', '0');
   block.setAttribute(
     'aria-roledescription',
     placeholders.carousel || 'Carousel',
@@ -173,16 +214,49 @@ export default async function decorate(block) {
   block.prepend(slidesWrapper);
 
   let slideIndicators;
+  let controls;
+
   if (!isSingleSlide) {
+    controls = document.createElement('div');
+    controls.classList.add('carousel-controls');
+
+    // Previous button
+    const prevButton = document.createElement('button');
+    prevButton.type = 'button';
+    prevButton.classList.add('carousel-prev', 'carousel-arrow-button');
+    prevButton.setAttribute(
+      'aria-label',
+      placeholders.previous || 'Previous slide',
+    );
+    prevButton.innerHTML = svgArrowLeft;
+
+    // Indicators
     const slideIndicatorsNav = document.createElement('nav');
     slideIndicatorsNav.setAttribute(
       'aria-label',
       placeholders.carouselSlideControls || 'Carousel Slide Controls',
     );
+
     slideIndicators = document.createElement('ol');
     slideIndicators.classList.add('carousel-slide-indicators');
     slideIndicatorsNav.append(slideIndicators);
-    block.append(slideIndicatorsNav);
+
+    // Next button
+    const nextButton = document.createElement('button');
+    nextButton.type = 'button';
+    nextButton.classList.add('carousel-next', 'carousel-arrow-button');
+    nextButton.setAttribute(
+      'aria-label',
+      placeholders.next || 'Next slide',
+    );
+    nextButton.innerHTML = svgArrowRight;
+
+    // Order matters here
+    controls.append(prevButton);
+    controls.append(slideIndicatorsNav);
+    controls.append(nextButton);
+
+    block.append(controls);
   }
 
   let slideCount = 0;
