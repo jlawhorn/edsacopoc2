@@ -339,6 +339,18 @@ button.button.secondary:hover {
   color: var(--color-brand-600);
 }
 
+.button.button--ghost {
+  background-color: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.button.button--ghost:hover {
+  background-color: transparent;
+  color: #000;
+}
+
 main input:hover {
   border: var(--shape-border-width-1) solid var(--color-neutral-700);
 }

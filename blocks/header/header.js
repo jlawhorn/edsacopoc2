@@ -166,6 +166,18 @@ export default async function decorate(block) {
   block.textContent = '';
   const nav = document.createElement('nav');
   nav.id = 'nav';
+
+  let globalNotice;
+  const noticeCandidate = fragment.querySelector('.global-notice-wrapper');
+
+  if (noticeCandidate) {
+    const clonedNoticeContent = noticeCandidate.cloneNode(true);
+    globalNotice = document.createElement('section');
+    globalNotice.className = 'nav-notice';
+    globalNotice.append(clonedNoticeContent);
+    noticeCandidate.remove();
+  }
+
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
   const classes = ['brand', 'sections', 'tools'];
@@ -489,6 +501,10 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  if (globalNotice) {
+    navWrapper.append(globalNotice);
+  }
 
   navWrapper.addEventListener('mouseout', (e) => {
     if (isDesktop.matches && !nav.contains(e.relatedTarget)) {
