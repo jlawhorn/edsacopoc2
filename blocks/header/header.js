@@ -223,23 +223,37 @@ export default async function decorate(block) {
   const navTools = nav.querySelector('.nav-tools');
 
   /** Wishlist */
-  const wishlist = document.createRange().createContextualFragment(`
-     <div class="wishlist-wrapper nav-tools-wrapper">
-       <button type="button" class="nav-wishlist-button" aria-label="Wishlist"></button>
-       <div class="wishlist-panel nav-tools-panel"></div>
-     </div>
-   `);
+  events.on(
+    'auth/user',
+    (user) => {
+      if (!user?.isAuthenticated) return;
 
-  navTools.append(wishlist);
+      const wishlist = document.createRange().createContextualFragment(`
+      <div class="wishlist-wrapper nav-tools-wrapper">
+        <button
+          type="button"
+          class="nav-wishlist-button"
+          aria-label="Wishlist">
+        </button>
+        <div class="wishlist-panel nav-tools-panel"></div>
+      </div>
+    `);
 
-  const wishlistButton = navTools.querySelector('.nav-wishlist-button');
+      navTools.append(wishlist);
 
-  const wishlistMeta = getMetadata('wishlist');
-  const wishlistPath = wishlistMeta ? new URL(wishlistMeta, window.location).pathname : '/wishlist';
+      const wishlistButton = navTools.querySelector('.nav-wishlist-button');
 
-  wishlistButton.addEventListener('click', () => {
-    window.location.href = rootLink(wishlistPath);
-  });
+      const wishlistMeta = getMetadata('wishlist');
+      const wishlistPath = wishlistMeta
+        ? new URL(wishlistMeta, window.location).pathname
+        : '/wishlist';
+
+      wishlistButton.addEventListener('click', () => {
+        window.location.href = rootLink(wishlistPath);
+      });
+    },
+    { eager: true },
+  );
 
   /** Mini Cart */
   const excludeMiniCartFromPaths = ['/checkout'];
