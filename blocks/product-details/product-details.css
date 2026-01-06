@@ -71,6 +71,12 @@
   margin-top: var(--spacing-xsmall);
 }
 
+.dropin-text-swatch__container:hover,
+.dropin-color-swatch__container:hover {
+  opacity: 0.8;
+}
+
+
 @media (min-width: 900px) {
   .product-details__wrapper {
     grid-template-columns: repeat(var(--grid-3-columns), 1fr);

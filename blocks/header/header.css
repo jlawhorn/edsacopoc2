@@ -341,6 +341,10 @@ header nav .nav-tools {
   z-index: 3;
 }
 
+header nav .minicart-wrapper {
+  order: 1;
+}
+
 header nav .nav-tools-wrapper > button {
   color: var(--color-brand-700);
   background: transparent;

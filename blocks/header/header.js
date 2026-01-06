@@ -7,7 +7,8 @@ import { loadFragment } from '../fragment/fragment.js';
 
 import renderAuthCombine from './renderAuthCombine.js';
 import { renderAuthDropdown } from './renderAuthDropdown.js';
-import { fetchPlaceholders, rootLink } from '../../scripts/commerce.js';
+import { fetchPlaceholders, checkIsAuthenticated, rootLink } from '../../scripts/commerce.js';
+import '../../scripts/initializers/auth.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -223,12 +224,8 @@ export default async function decorate(block) {
   const navTools = nav.querySelector('.nav-tools');
 
   /** Wishlist */
-  events.on(
-    'auth/user',
-    (user) => {
-      if (!user?.isAuthenticated) return;
-
-      const wishlist = document.createRange().createContextualFragment(`
+  if (checkIsAuthenticated()) {
+    const wishlist = document.createRange().createContextualFragment(`
       <div class="wishlist-wrapper nav-tools-wrapper">
         <button
           type="button"
@@ -239,21 +236,19 @@ export default async function decorate(block) {
       </div>
     `);
 
-      navTools.append(wishlist);
+    navTools.append(wishlist);
 
-      const wishlistButton = navTools.querySelector('.nav-wishlist-button');
+    const wishlistButton = navTools.querySelector('.nav-wishlist-button');
 
-      const wishlistMeta = getMetadata('wishlist');
-      const wishlistPath = wishlistMeta
-        ? new URL(wishlistMeta, window.location).pathname
-        : '/wishlist';
+    const wishlistMeta = getMetadata('wishlist');
+    const wishlistPath = wishlistMeta
+      ? new URL(wishlistMeta, window.location).pathname
+      : '/wishlist';
 
-      wishlistButton.addEventListener('click', () => {
-        window.location.href = rootLink(wishlistPath);
-      });
-    },
-    { eager: true },
-  );
+    wishlistButton.addEventListener('click', () => {
+      window.location.href = rootLink(wishlistPath);
+    });
+  }
 
   /** Mini Cart */
   const excludeMiniCartFromPaths = ['/checkout'];
