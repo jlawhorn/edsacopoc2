@@ -13,6 +13,7 @@
           "Magento-Store-View-Code": "default"
         }
       },
+      "commerce-assets-enabled": false,
       "analytics": {
         "base-currency-code": "USD",
         "environment": "Production",
