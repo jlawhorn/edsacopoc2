@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(var(--grid-1-columns), 1fr);
   grid-column-gap: var(--grid-1-gutters);
-  margin-top: var(--spacing-medium);
+  margin-top: var(--spacing-large);
 }
 
 .product-details__left-column {
