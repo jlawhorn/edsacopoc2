@@ -291,7 +291,7 @@ export default async function decorate(block) {
       },
     })($addToCart);
   } else {
-    $loginWarning.innerHTML = '<p>Login to purchase</p>';
+    $loginWarning.innerHTML = '<strong>Login to purchase</strong>';
   }
 
   // Lifecycle Events

@@ -76,6 +76,12 @@
   opacity: 0.8;
 }
 
+.product-details__login-warning {
+  font-weight: bold;
+  font-size: 2rem;
+  color: var(--color-alert-800);
+}
+
 
 @media (min-width: 900px) {
   .product-details__wrapper {
