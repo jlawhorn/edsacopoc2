@@ -7,7 +7,7 @@
         "cs": {
           "AC-Environment-ID": "HtxMJZCyprWn4FS33yzJ3V",
           "AC-View-ID": "044d8264-477c-49f9-b28e-3866ec05a27d",
-          "AC-Source-Locale": "en_US",
+          "AC-Source-Locale": "en-US",
           "AC-Price-Book-ID": "base",
           "Magento-Store-Code": "main_website_store",
           "Magento-Store-View-Code": "default"
@@ -16,9 +16,9 @@
       "commerce-assets-enabled": false,
       "analytics": {
         "base-currency-code": "USD",
-        "environment": "Production",
+        "environment": "Testing",
         "environment-id": "f38a0de0-764b-41fa-bd2c-5bc2f3c7b39a",
-        "locale": "en_US",
+        "locale": "en-US",
         "store-url": "https://main--edsacopoc2--jlawhorn.aem.live/",
         "store-view-currency-code": "USD",
         "storefront-template": "Other",
