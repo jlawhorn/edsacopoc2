@@ -16,8 +16,8 @@ document.addEventListener('click', (e) => {
   sessionStorage.setItem(STORAGE_KEY, 'true');
 });
 
-export default function decorate(block) {
-  const labels = fetchPlaceholders();
+export default async function decorate(block) {
+  const labels = await fetchPlaceholders();
   const globalNoticeData = extractKeyValuePairs(block);
   if (globalNoticeData && globalNoticeData.enabled === true && globalNoticeData.content && sessionStorage.getItem(STORAGE_KEY) !== 'true') {
     block.innerHTML = globalNoticeData.content;
