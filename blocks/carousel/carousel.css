@@ -118,8 +118,8 @@ main > .section .carousel-wrapper {
 
 .carousel .carousel-slide-indicator button {
     text-indent: -9999px;
-    width: 12px;
-    height: 12px;
+    width: 24px;
+    height: 24px;
     outline: 0;
     border: 0 none;
     border-radius: 50%;
